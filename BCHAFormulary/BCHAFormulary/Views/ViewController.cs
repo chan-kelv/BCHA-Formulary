@@ -45,7 +45,9 @@ namespace BCHAFormulary
 				else{
 					//TODO parse data
 					Console.WriteLine(data);
-					updateFile.saveFile(data);
+					bool saveStatus = updateFile.saveFile(data);
+					if (!saveStatus)
+						Console.WriteLine("An error has occured saving the file");
 				}
 			}, TaskScheduler.FromCurrentSynchronizationContext());
 			hud.Hide (true);

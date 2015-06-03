@@ -100,6 +100,10 @@
     </Compile>
     <Compile Include="Utilities\WebHelper.cs" />
     <Compile Include="Utilities\FileAccessHelper.cs" />
+    <Compile Include="Drug\Drug.cs" />
+    <Compile Include="Drug\BrandDrug.cs" />
+    <Compile Include="Drug\BrandFormularyDrug.cs" />
+    <Compile Include="Drug\BrandExcludedDrug.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
@@ -108,6 +112,7 @@
   <ItemGroup>
     <Folder Include="Views\" />
     <Folder Include="Utilities\" />
+    <Folder Include="Drug\" />
   </ItemGroup>
   <ItemGroup>
     <XamarinComponentReference Include="restsharp">
