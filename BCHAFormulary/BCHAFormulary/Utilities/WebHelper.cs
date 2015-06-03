@@ -32,6 +32,8 @@ namespace BCHAFormulary
 		public const string dropboxRoot = "https://www.dropbox.com/";
 
 		//TODO change these back to official ones before release
+		public const string updateEndpoint = dropboxRoot + "s/4cvo08xnmlg7qr6/update.txt?dl=1";
+
 		public const string formularyEndpoint = dropboxRoot + "s/3qdfzzfeucp83nt/formulary.csv?dl=1";
 		public const string excludedEndpoint = dropboxRoot + "s/lj6ucd9o7u1og3k/excluded.csv?dl=1";
 		public const string restrictedEndpoint = dropboxRoot + "s/n4so74xl4n7wbhy/restricted.csv?dl=1";
