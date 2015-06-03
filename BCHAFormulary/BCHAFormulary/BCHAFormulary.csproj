@@ -104,6 +104,8 @@
     <Compile Include="Drug\BrandDrug.cs" />
     <Compile Include="Drug\BrandFormularyDrug.cs" />
     <Compile Include="Drug\BrandExcludedDrug.cs" />
+    <Compile Include="Drug\BrandRestrictedDrug.cs" />
+    <Compile Include="Drug\GenericDrug.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>

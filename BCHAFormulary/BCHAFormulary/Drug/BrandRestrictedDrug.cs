@@ -3,17 +3,18 @@ using System.Text;
 
 namespace BCHAFormulary
 {
-	public class BrandExcludedDrug : BrandDrug
+	public class BrandRestrictedDrug : BrandDrug
 	{
 		StringBuilder criteria;
-		string criteriaString {
+		string CriteriaString {
 			get {
 				return criteria.ToString ();
 			}
 		}
-		public BrandExcludedDrug (string genericName, string brandName, string criteria) : base(genericName, brandName, "Excluded")
+
+		public BrandRestrictedDrug (string genericName, string brandName, string criteria) : base(genericName, brandName, "Restricted")
 		{
-			this.criteria = new StringBuilder (criteria);
+			this.criteria =new StringBuilder(criteria);
 		}
 
 		public void additionalCriteria(string extraCriteria){
@@ -55,6 +56,7 @@ namespace BCHAFormulary
 			}
 			this.criteria.Insert (criteria.Length, ("\n\n" + extraAddition.ToString()));
 		}
+
 	}
 }
 
