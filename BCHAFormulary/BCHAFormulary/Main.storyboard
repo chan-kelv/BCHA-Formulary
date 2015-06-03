@@ -95,6 +95,10 @@
                             </mask>
                         </variation>
                     </view>
+                    <connections>
+                        <outlet property="txtSearchField" destination="8" id="name-outlet-8"/>
+                        <outlet property="btnSearch" destination="9" id="name-outlet-9"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
