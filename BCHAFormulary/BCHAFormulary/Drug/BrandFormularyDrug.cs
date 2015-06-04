@@ -5,7 +5,7 @@ namespace BCHAFormulary
 {
 	public class BrandFormularyDrug : BrandDrug
 	{
-		List<string> strengths;
+		public List<string> strengths;
 
 		public BrandFormularyDrug (string genericName, string brandName, string strength) : base (genericName, brandName, "Formulary")
 		{

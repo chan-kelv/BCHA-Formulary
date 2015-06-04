@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BCHAFormulary
 {
 	public class BrandDrug : Drug
 	{
-		string brandName { get; set; }
-		List<string> genericNames;
+		public string brandName;
+		public List<string> genericNames;
 
 		public BrandDrug (string genericName, string brandName, string status) : base(status)
 		{
@@ -19,11 +20,11 @@ namespace BCHAFormulary
 			if (!string.IsNullOrEmpty (name))
 				genericNames.Add (name);
 		}
-//
-		// USELESS METHOD??
-//		public bool containsGenericName(string name){
-//			return genericNames.Contains (name);
-//		}
+
+		public bool containsGenericName(string name){
+			return (genericNames.Any (s => s.Equals (name, StringComparison.OrdinalIgnoreCase)));
+		}
+
 	}
 }
 

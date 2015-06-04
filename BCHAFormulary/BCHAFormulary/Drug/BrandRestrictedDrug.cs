@@ -5,8 +5,8 @@ namespace BCHAFormulary
 {
 	public class BrandRestrictedDrug : BrandDrug
 	{
-		StringBuilder criteria;
-		string CriteriaString {
+		public StringBuilder criteria;
+		public string CriteriaString {
 			get {
 				return criteria.ToString ();
 			}

@@ -3,15 +3,12 @@ using System.Text;
 
 namespace BCHAFormulary
 {
-	public class BrandExcludedDrug : BrandDrug
+	public class GenericExcludedDrug : GenericDrug
 	{
 		public StringBuilder criteria;
-		public string criteriaString {
-			get {
-				return criteria.ToString ();
-			}
-		}
-		public BrandExcludedDrug (string genericName, string brandName, string criteria) : base(genericName, brandName, "Excluded")
+
+		public GenericExcludedDrug (string genericName, string brandName, string criteria)
+			:base (genericName, brandName, "Excluded")
 		{
 			this.criteria = new StringBuilder (criteria);
 		}

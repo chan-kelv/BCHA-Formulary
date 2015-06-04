@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BCHAFormulary
 {
@@ -16,8 +17,13 @@ namespace BCHAFormulary
 			};
 		}
 
+		public void addBrandName(string name){
+			if(!string.IsNullOrEmpty(name))
+				brandNames.Add(name);
+		}
+
 		public bool containsBrandName(string name){
-			 return brandNames.Find (s => s.IndexOf (name, System.StringComparison.OrdinalIgnoreCase) >= 0);
+			return (brandNames.Any (s => s.Equals (name, StringComparison.OrdinalIgnoreCase)));
 		}
 	}
 }
