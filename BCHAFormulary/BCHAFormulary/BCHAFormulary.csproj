@@ -68,6 +68,16 @@
     <Reference Include="Calabash">
       <HintPath>..\packages\Xamarin.TestCloud.Agent.0.13.0\lib\Xamarin.iOS10\Calabash.dll</HintPath>
     </Reference>
+    <Reference Include="ModernHttpClient">
+      <HintPath>..\Components\modernhttpclient-2.4.2\lib\ios-unified\ModernHttpClient.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http" />
+    <Reference Include="RestSharp.MonoTouch">
+      <HintPath>..\Components\restsharp-105.0.1.0\lib\ios-unified\RestSharp.MonoTouch.dll</HintPath>
+    </Reference>
+    <Reference Include="MBProgressHUD">
+      <HintPath>..\Components\mbprogresshud-0.9.0.2\lib\ios-unified\MBProgressHUD.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Contents.json" />
@@ -84,10 +94,41 @@
   <ItemGroup>
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
-    <Compile Include="ViewController.cs" />
-    <Compile Include="ViewController.designer.cs">
+    <Compile Include="Views\ViewController.cs" />
+    <Compile Include="Views\ViewController.designer.cs">
       <DependentUpon>ViewController.cs</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\WebHelper.cs" />
+    <Compile Include="Utilities\FileAccessHelper.cs" />
+    <Compile Include="Drug\Drug.cs" />
+    <Compile Include="Drug\BrandDrug.cs" />
+    <Compile Include="Drug\BrandFormularyDrug.cs" />
+    <Compile Include="Drug\BrandExcludedDrug.cs" />
+    <Compile Include="Drug\BrandRestrictedDrug.cs" />
+    <Compile Include="Drug\GenericDrug.cs" />
+    <Compile Include="Drug\GenericFormularyDrug.cs" />
+    <Compile Include="Drug\GenericExcludedDrug.cs" />
+    <Compile Include="Drug\GenericRestrictedDrug.cs" />
+    <Compile Include="Drug\BrandDrugList.cs" />
+    <Compile Include="Drug\GenericDrugList.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
+  <ItemGroup>
+    <BundleResource Include="Resources\lmps_logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Views\" />
+    <Folder Include="Utilities\" />
+    <Folder Include="Drug\" />
+  </ItemGroup>
+  <ItemGroup>
+    <XamarinComponentReference Include="restsharp">
+      <Version>105.0.1.0</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
+    <XamarinComponentReference Include="mbprogresshud">
+      <Version>0.9.0.2</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
+  </ItemGroup>
 </Project>
