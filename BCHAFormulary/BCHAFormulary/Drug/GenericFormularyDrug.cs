@@ -14,6 +14,10 @@ namespace BCHAFormulary
 				strength
 			};
 		}
+
+		public void AddStrength(string newStrength){
+			strengths.Add (newStrength);
+		}
 	}
 }
 

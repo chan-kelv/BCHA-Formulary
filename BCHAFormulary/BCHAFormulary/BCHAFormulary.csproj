@@ -75,6 +75,12 @@
     <Reference Include="MBProgressHUD">
       <HintPath>..\Components\mbprogresshud-0.9.0.2\lib\ios-unified\MBProgressHUD.dll</HintPath>
     </Reference>
+    <Reference Include="ServiceStack.Text.XamarinIOS">
+      <HintPath>..\Components\servicestacktext-3.9.61.3\lib\ios-unified\ServiceStack.Text.XamarinIOS.dll</HintPath>
+    </Reference>
+    <Reference Include="CsvHelper">
+      <HintPath>..\Components\CsvHelper-master\src\CsvHelper\obj\Release\CsvHelper.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Contents.json" />
@@ -109,6 +115,7 @@
     <Compile Include="Views\DrugSearchView.designer.cs">
       <DependentUpon>DrugSearchView.cs</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\CSVParser.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>

@@ -6,6 +6,9 @@ using UIKit;
 using CoreGraphics;
 using MBProgressHUD;
 using System.Threading.Tasks;
+using System.Text;
+using System.IO;
+
 
 namespace BCHAFormulary
 {
@@ -13,6 +16,7 @@ namespace BCHAFormulary
 	{
 		WebHelper webHelper = new WebHelper();
 		FileAccessHelper updateFile = new FileAccessHelper(Environment.SpecialFolder.MyDocuments, "update.txt");
+		CSVParser masterList = new CSVParser();
 
 		public DrugSearchView () : base ("DrugSearchView", null)
 		{
@@ -31,6 +35,8 @@ namespace BCHAFormulary
 			base.ViewDidLoad ();
 			
 			// Perform any additional setup after loading the view, typically from a nib.
+
+			//make text 
 			NavigationController.SetNavigationBarHidden(hidden:true, animated:false);
 			txtDrugInput.Layer.BorderColor = new CGColor(255,165,0);
 
@@ -45,13 +51,15 @@ namespace BCHAFormulary
 			//do all updating here
 
 			string data = null;
-
-
+			string restrictionData = null;
+			string formularyData = null;
 			Task.Factory.StartNew( delegate {
 				data = webHelper.webGet(Uri.updateEndpoint);
+				formularyData = webHelper.webGet(Uri.formularyEndpoint);
+				restrictionData = webHelper.webGet(Uri.restrictedEndpoint);
 			}).ContinueWith(task =>{
 				if (data == null){
-					new UIAlertView("Update error", "There was an error updating lists, please try again later", null, "OK");
+					new UIAlertView("Update error", "There was an error updating lists, please try again later", null, "OK").Show();
 				}
 				else{
 					//TODO parse data
@@ -59,6 +67,17 @@ namespace BCHAFormulary
 					bool saveStatus = updateFile.saveFile(data);
 					if (!saveStatus)
 						Console.WriteLine("An error has occured saving the file");
+				}
+
+				if(formularyData == null)
+					new UIAlertView("Formulary update error", "There was an error updating lists, please try again later", null, "OK").Show();
+				else{
+					masterList.ParseFormulary(formularyData);
+				}
+				if (restrictionData == null)
+					new UIAlertView("Restriction update error", "There was an error updating lists, please try again later", null, "OK").Show();
+				else{
+					masterList.ParseRestricted(restrictionData);
 				}
 			}, TaskScheduler.FromCurrentSynchronizationContext());
 			hud.Hide (true);
