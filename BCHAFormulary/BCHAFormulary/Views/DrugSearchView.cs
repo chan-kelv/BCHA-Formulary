@@ -52,10 +52,12 @@ namespace BCHAFormulary
 
 			string data = null;
 			string restrictionData = null;
+			string excludedData = null;
 			string formularyData = null;
 			Task.Factory.StartNew( delegate {
 				data = webHelper.webGet(Uri.updateEndpoint);
 				formularyData = webHelper.webGet(Uri.formularyEndpoint);
+				excludedData = webHelper.webGet(Uri.excludedEndpoint);
 				restrictionData = webHelper.webGet(Uri.restrictedEndpoint);
 			}).ContinueWith(task =>{
 				if (data == null){
@@ -73,6 +75,11 @@ namespace BCHAFormulary
 					new UIAlertView("Formulary update error", "There was an error updating lists, please try again later", null, "OK").Show();
 				else{
 					masterList.ParseFormulary(formularyData);
+				}
+				if (restrictionData == null)
+					new UIAlertView("Restriction update error", "There was an error updating lists, please try again later", null, "OK").Show();
+				else{
+					masterList.ParseExcluded(excludedData);
 				}
 				if (restrictionData == null)
 					new UIAlertView("Restriction update error", "There was an error updating lists, please try again later", null, "OK").Show();

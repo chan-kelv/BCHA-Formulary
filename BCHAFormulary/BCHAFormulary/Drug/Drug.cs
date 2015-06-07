@@ -4,7 +4,7 @@ namespace BCHAFormulary
 {
 	public class Drug
 	{
-		protected string status{ get; set; }
+		public string status{ get; set; }
 
 		public Drug (string status)
 		{
