@@ -25,6 +25,14 @@ namespace BCHAFormulary
 			Xamarin.Calabash.Start();
 			#endif
 
+			//set the search as the first screen to launch
+			Window = new UIWindow (UIScreen.MainScreen.Bounds);
+
+			var controller = new DrugSearchView();
+			var navController = new UINavigationController (controller);
+			Window.RootViewController = navController;
+
+
 			return true;
 		}
 

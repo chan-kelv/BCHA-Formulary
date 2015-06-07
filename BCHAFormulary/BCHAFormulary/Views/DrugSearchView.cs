@@ -1,27 +1,38 @@
-﻿using System;
+﻿
+using System;
 
+using Foundation;
 using UIKit;
-using RestSharp;
-using System.Threading.Tasks;
+using CoreGraphics;
 using MBProgressHUD;
-using System.IO;
+using System.Threading.Tasks;
 
 namespace BCHAFormulary
 {
-	public partial class ViewController : UIViewController
+	public partial class DrugSearchView : UIViewController
 	{
 		WebHelper webHelper = new WebHelper();
 		FileAccessHelper updateFile = new FileAccessHelper(Environment.SpecialFolder.MyDocuments, "update.txt");
 
-		public ViewController (IntPtr handle) : base (handle)
+		public DrugSearchView () : base ("DrugSearchView", null)
 		{
+		}
+
+		public override void DidReceiveMemoryWarning ()
+		{
+			// Releases the view if it doesn't have a superview.
+			base.DidReceiveMemoryWarning ();
+			
+			// Release any cached data, images, etc that aren't in use.
 		}
 
 		public override void ViewDidLoad ()
 		{
 			base.ViewDidLoad ();
-
+			
 			// Perform any additional setup after loading the view, typically from a nib.
+			NavigationController.SetNavigationBarHidden(hidden:true, animated:false);
+			txtDrugInput.Layer.BorderColor = new CGColor(255,165,0);
 
 			#region update files
 
@@ -57,12 +68,6 @@ namespace BCHAFormulary
 			btnSearch.TouchUpInside += delegate {
 				Console.WriteLine(updateFile.loadFile());
 			};
-		}
-
-		public override void DidReceiveMemoryWarning ()
-		{
-			base.DidReceiveMemoryWarning ();
-			// Release any cached data, images, etc that aren't in use.
 		}
 	}
 }
