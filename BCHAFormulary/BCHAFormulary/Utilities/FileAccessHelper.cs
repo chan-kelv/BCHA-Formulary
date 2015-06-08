@@ -29,13 +29,17 @@ namespace BCHAFormulary
 		}
 
 		public string loadFile(){
-			using (var streamReader = new StreamReader(fullFileName))
-			{
-				return streamReader.ReadToEnd();
+			try{
+				using (var streamReader = new StreamReader(fullFileName))
+				{
+					return streamReader.ReadToEnd();
+				}
 			}
+				catch(Exception e){
+					Console.WriteLine ("Could not load file {0} due to {1}", fullFileName, e.Message);
+					return string.Empty;
+				}
 		}
-
-
-	}
+		}
 }
 

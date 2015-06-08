@@ -16,6 +16,15 @@ namespace BCHAFormulary
 	{
 		WebHelper webHelper = new WebHelper();
 		FileAccessHelper updateFile = new FileAccessHelper(Environment.SpecialFolder.MyDocuments, "update.txt");
+		FileAccessHelper formularyFile = new FileAccessHelper(Environment.SpecialFolder.MyDocuments, "formulary.txt");
+		FileAccessHelper excludedFile = new FileAccessHelper(Environment.SpecialFolder.MyDocuments, "excluded.txt");
+		FileAccessHelper restrictedFile = new FileAccessHelper(Environment.SpecialFolder.MyDocuments, "restricted.txt");
+
+		string updateData;
+		string restrictionData;
+		string excludedData;
+		string formularyData;
+
 		CSVParser masterList = new CSVParser();
 
 		public DrugSearchView () : base ("DrugSearchView", null)
@@ -48,52 +57,85 @@ namespace BCHAFormulary
 			};
 			View.AddSubview (hud);
 			hud.Show (true);
-			//do all updating here
 
-			string data = null;
-			string restrictionData = null;
-			string excludedData = null;
-			string formularyData = null;
-			Task.Factory.StartNew( delegate {
-				data = webHelper.webGet(Uri.updateEndpoint);
-				formularyData = webHelper.webGet(Uri.formularyEndpoint);
-				excludedData = webHelper.webGet(Uri.excludedEndpoint);
-				restrictionData = webHelper.webGet(Uri.restrictedEndpoint);
-			}).ContinueWith(task =>{
-				if (data == null){
-					new UIAlertView("Update error", "There was an error updating lists, please try again later", null, "OK").Show();
-				}
-				else{
-					//TODO parse data
-					Console.WriteLine(data);
-					bool saveStatus = updateFile.saveFile(data);
-					if (!saveStatus)
-						Console.WriteLine("An error has occured saving the file");
-				}
+			//try to load any saved data sets
+			updateData = updateFile.loadFile();
+			formularyData = formularyFile.loadFile();
+			excludedData = excludedFile.loadFile();
+			restrictionData = restrictedFile.loadFile();
 
-				if(formularyData == null)
-					new UIAlertView("Formulary update error", "There was an error updating lists, please try again later", null, "OK").Show();
-				else{
-					masterList.ParseFormulary(formularyData);
+			//check if network is available
+			if(webHelper.isConnected()){//phone is connected to a network
+				var currVersion = updateFile.loadFile(); //check if files need to be updated
+				updateData = webHelper.webGet(Uri.updateEndpoint);
+				if(string.IsNullOrEmpty(currVersion) || !currVersion.Equals(updateData)){ //needs to be updated
+					Task.Factory.StartNew( delegate {
+						formularyData = webHelper.webGet(Uri.formularyEndpoint);
+						excludedData = webHelper.webGet(Uri.excludedEndpoint);
+						restrictionData = webHelper.webGet(Uri.restrictedEndpoint);
+					}).ContinueWith(task =>{
+						if(formularyData == null)
+							new UIAlertView("Formulary update error", "There was an error updating lists, please try again later", null, "OK").Show();
+						else
+							masterList.ParseFormulary(formularyData);
+						if (restrictionData == null)
+							new UIAlertView("Restriction update error", "There was an error updating lists, please try again later", null, "OK").Show();
+						else
+							masterList.ParseExcluded(excludedData);
+						if (restrictionData == null)
+							new UIAlertView("Restriction update error", "There was an error updating lists, please try again later", null, "OK").Show();
+						else
+							masterList.ParseRestricted(restrictionData);
+
+						//if all 3 datasets are not null, files have correctly been updated, save the data set
+						if(!string.IsNullOrEmpty(formularyData) && !string.IsNullOrEmpty(excludedData) && !string.IsNullOrEmpty(restrictionData)){
+							updateFile.saveFile(updateData);
+							formularyFile.saveFile(formularyData);
+							excludedFile.saveFile(excludedData);
+							restrictedFile.saveFile(restrictionData);
+						}
+						hud.Hide (true);
+					}, TaskScheduler.FromCurrentSynchronizationContext());
 				}
-				if (restrictionData == null)
-					new UIAlertView("Restriction update error", "There was an error updating lists, please try again later", null, "OK").Show();
-				else{
-					masterList.ParseExcluded(excludedData);
+				else{ //no update is needed, parse files saved
+					LoadListOffline();
+					hud.Hide(true);
 				}
-				if (restrictionData == null)
-					new UIAlertView("Restriction update error", "There was an error updating lists, please try again later", null, "OK").Show();
-				else{
-					masterList.ParseRestricted(restrictionData);
-				}
-			}, TaskScheduler.FromCurrentSynchronizationContext());
-			hud.Hide (true);
+			}
+
+			else{ //phone is not connected to a network
+				LoadListOffline();
+				hud.Hide(true);
+			}
+
 
 			#endregion
 
 			btnSearch.TouchUpInside += delegate {
-				Console.WriteLine(updateFile.loadFile());
+				if(webHelper.isConnected())
+					Console.WriteLine("phone is online");
+				Console.WriteLine("Generic drug count total {0}", masterList.genericList.Count);
 			};
+		}
+
+		private void LoadListOffline(){
+			//datasets are either default/loaded files/new files at this point
+			if(string.IsNullOrEmpty(formularyData)){ //use default if no saved file found
+				formularyData = File.ReadAllText("formulary.csv");
+			}
+			if(string.IsNullOrEmpty(excludedData)){ //use default if no saved file found
+				excludedData = File.ReadAllText("excluded.csv");
+				//					masterList.ParseFormulary(excludedData);
+			}
+			if(string.IsNullOrEmpty(restrictionData)){ //use default if no saved file found
+				restrictionData = File.ReadAllText("restricted.csv");
+				//					masterList.ParseFormulary(restrictionData);
+			}
+
+			//parse data 			
+			masterList.ParseFormulary(formularyData);
+			masterList.ParseExcluded(excludedData);
+			masterList.ParseRestricted(restrictionData);
 		}
 	}
 }

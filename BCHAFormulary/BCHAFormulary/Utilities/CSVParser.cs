@@ -8,8 +8,8 @@ namespace BCHAFormulary
 {
 	public class CSVParser
 	{
-		Dictionary<string, GenericDrug> genericList;
-		Dictionary<string, BrandDrug> brandList;
+		public Dictionary<string, GenericDrug> genericList;
+		public Dictionary<string, BrandDrug> brandList;
 
 		public CSVParser ()
 		{
@@ -161,9 +161,6 @@ namespace BCHAFormulary
 					string name = nextLine[0].ToUpper();
 					string brandName = nextLine[1].ToUpper();
 					string criteria = nextLine[2].ToUpper().Trim();
-
-					Console.WriteLine("Restricted drug to add {0}, {1}, {2}", name, brandName, criteria);
-
 					//extraline for restricted criteria
 					if(string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(criteria)){
 						GenericDrug generic;
