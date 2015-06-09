@@ -1,5 +1,6 @@
 ﻿using System;
 using RestSharp;
+using Connectivity.Plugin;
 
 namespace BCHAFormulary
 {
@@ -24,6 +25,11 @@ namespace BCHAFormulary
 			var response = client.Execute(request);
 			responseBody = response.Content;
 			return responseBody;
+		}
+
+		public bool isConnected(){
+			var connectionManager = CrossConnectivity.Current;
+			return (connectionManager.IsConnected);
 		}
 	}
 
