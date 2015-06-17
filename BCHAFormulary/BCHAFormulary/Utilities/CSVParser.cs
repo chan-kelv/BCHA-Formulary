@@ -122,7 +122,7 @@ namespace BCHAFormulary
 							else{
 								if(brandList.ContainsKey(brandName)){
 									BrandDrug brand;
-									if(brandList.TryGetValue(brandName, out brand) && ((BrandExcludedDrug)brand).status.Equals("Excluded"))
+									if(brandList.TryGetValue(brandName, out brand) && ((BrandExcludedDrug)brand).status.Equals(Properties.Excluded))
 										((BrandExcludedDrug)brand).addGenericName(name);
 								}
 								else{
@@ -203,7 +203,7 @@ namespace BCHAFormulary
 							else{
 								if(brandList.ContainsKey(brandName)){
 									BrandDrug brand;
-									if(brandList.TryGetValue(brandName, out brand) && (brand.status.Equals("Restricted")))
+									if(brandList.TryGetValue(brandName, out brand) && (brand.status.Equals(Properties.Restricted)))
 										brand.addGenericName(name);
 								}
 								else{

@@ -107,15 +107,25 @@ namespace BCHAFormulary
 				LoadListOffline();
 				hud.Hide(true);
 			}
-
-
 			#endregion
 
 			btnSearch.TouchUpInside += delegate {
 				if(webHelper.isConnected())
 					Console.WriteLine("phone is online");
 				Console.WriteLine("Generic drug count total {0}", masterList.genericList.Count);
+				var dummyDrug = new GenericFormularyDrug("Tylenol", "Acetaminophen", "1");
+				dummyDrug.addBrandName("dummy brand");
+				dummyDrug.AddStrength("2");
+				dummyDrug.AddStrength("3");
+				this.NavigationController.PushViewController(new FormularyResultViewController(dummyDrug), false);
 			};
+		}
+
+		public override void ViewDidAppear (bool animated)
+		{
+			base.ViewDidAppear (animated);
+			NavigationController.NavigationBarHidden = true;
+
 		}
 
 		private void LoadListOffline(){

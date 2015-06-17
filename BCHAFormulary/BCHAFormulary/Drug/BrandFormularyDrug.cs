@@ -7,7 +7,7 @@ namespace BCHAFormulary
 	{
 		public List<string> strengths;
 
-		public BrandFormularyDrug (string genericName, string brandName, string strength) : base (genericName, brandName, "Formulary")
+		public BrandFormularyDrug (string genericName, string brandName, string strength) : base (genericName, brandName, Properties.Formulary)
 		{
 			strengths = new List<string> ();
 			strengths.Add (strength);

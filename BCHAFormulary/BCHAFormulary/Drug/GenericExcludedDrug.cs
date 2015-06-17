@@ -8,7 +8,7 @@ namespace BCHAFormulary
 		public StringBuilder criteria;
 
 		public GenericExcludedDrug (string genericName, string brandName, string criteria)
-			:base (genericName, brandName, "Excluded")
+			:base (genericName, brandName, Properties.Excluded)
 		{
 			this.criteria = new StringBuilder (criteria);
 		}
