@@ -40,6 +40,6 @@ namespace BCHAFormulary
 					return string.Empty;
 				}
 		}
-		}
+	}
 }
 

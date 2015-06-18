@@ -87,6 +87,7 @@
     <Reference Include="Connectivity.Plugin.Abstractions">
       <HintPath>..\packages\Xam.Plugin.Connectivity.1.0.2\lib\Xamarin.iOS10\Connectivity.Plugin.Abstractions.dll</HintPath>
     </Reference>
+    <Reference Include="MonoTouch.Dialog-1" />
   </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Contents.json" />
@@ -123,6 +124,8 @@
       <DependentUpon>DrugSearchView.cs</DependentUpon>
     </Compile>
     <Compile Include="Utilities\CSVParser.cs" />
+    <Compile Include="Utilities\Properties.cs" />
+    <Compile Include="Views\FormularyResultsViewController.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>

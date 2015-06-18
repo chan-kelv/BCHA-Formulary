@@ -11,7 +11,7 @@ namespace BCHAFormulary
 				return criteria.ToString ();
 			}
 		}
-		public BrandExcludedDrug (string genericName, string brandName, string criteria) : base(genericName, brandName, "Excluded")
+		public BrandExcludedDrug (string genericName, string brandName, string criteria) : base(genericName, brandName, Properties.Excluded)
 		{
 			this.criteria = new StringBuilder (criteria);
 		}
