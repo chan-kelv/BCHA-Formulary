@@ -124,8 +124,13 @@
       <DependentUpon>DrugSearchView.cs</DependentUpon>
     </Compile>
     <Compile Include="Utilities\CSVParser.cs" />
+
     <Compile Include="Utilities\Properties.cs" />
-    <Compile Include="Views\FormularyResultsViewController.cs" />
+    <Compile Include="Views\FormularyResultViewController.cs" />
+    <Compile Include="Views\FormularyResultViewController.designer.cs">
+      <DependentUpon>FormularyResultViewController.cs</DependentUpon>
+    </Compile>
+
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
