@@ -113,11 +113,18 @@ namespace BCHAFormulary
 				if(webHelper.isConnected())
 					Console.WriteLine("phone is online");
 				Console.WriteLine("Generic drug count total {0}", masterList.genericList.Count);
-				var dummyDrug = new GenericFormularyDrug("Tylenol", "Acetaminophen", "1");
-				dummyDrug.addBrandName("dummy brand");
-				dummyDrug.AddStrength("2");
-				dummyDrug.AddStrength("3");
-				this.NavigationController.PushViewController(new FormularyResultViewController(dummyDrug), false);
+				if(txtDrugInput.Text.Equals("w")){
+					var dummyDrug = new GenericFormularyDrug("Tylenol", "Acetaminophen", "1");
+					dummyDrug.addBrandName("dummy brand");
+					dummyDrug.AddStrength("2");
+					dummyDrug.AddStrength("3");
+					this.NavigationController.PushViewController(new FormularyResultViewController(dummyDrug), false);
+				}
+				else{
+					var dummyDrug = new BrandExcludedDrug("SITAGLIPTIN-METFORMIN", "Janumet", "Within the gliptin class, linagliptin may have clinical benefit, is covered by MOH, has dosing simplicity and lack of issues around drug interactions.");
+					dummyDrug.addGenericName("Janumet XR");
+					this.NavigationController.PushViewController(new ExcludedResultViewController(dummyDrug),true);
+				}
 			};
 		}
 

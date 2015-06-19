@@ -12,7 +12,7 @@ namespace BCHAFormulary
 			}
 		}
 
-		public BrandRestrictedDrug (string genericName, string brandName, string criteria) : base(genericName, brandName, Properties.Restricted)
+		public BrandRestrictedDrug (string genericName, string brandName, string criteria) : base(genericName, brandName, UIProperties.Restricted)
 		{
 			this.criteria =new StringBuilder(criteria);
 		}

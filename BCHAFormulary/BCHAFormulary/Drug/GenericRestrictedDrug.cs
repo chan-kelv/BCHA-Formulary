@@ -8,7 +8,7 @@ namespace BCHAFormulary
 		public StringBuilder criteria;
 
 		public GenericRestrictedDrug (string genericName, string brandName, string criteria)
-			:base(genericName, brandName, Properties.Restricted)
+			:base(genericName, brandName, UIProperties.Restricted)
 		{
 			this.criteria = new StringBuilder (criteria);
 		}
