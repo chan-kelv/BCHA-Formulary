@@ -63,10 +63,13 @@ namespace BCHAFormulary
 
 			var statusElement = new StyledStringElement ("EXCLUDED");
 			statusElement.TextColor = (Colors.Red);
+			statusElement.BackgroundColor = UIColor.White;
+			statusElement.Font = UIFont.BoldSystemFontOfSize (18);
 			Root.Add (new Section ("Status"){ statusElement });
 
 			var excludedReasonElement = new StyledMultilineElement (UIProperties.ExcludedReason);
 			excludedReasonElement.Font = UIFont.SystemFontOfSize (13);
+			excludedReasonElement.BackgroundColor = UIColor.White;
 			Root.Add (new Section ("Excluded Reason"){ excludedReasonElement });
 
 			//var criteria
