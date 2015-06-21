@@ -1,23 +1,23 @@
 ﻿using System;
 using MonoTouch.Dialog;
-using Foundation;
 using UIKit;
+using Foundation;
 using System.Collections.Generic;
 
 namespace BCHAFormulary
 {
-	[Register("ExcludedResultViewController")]
-	public partial class ExcludedResultViewController : DialogViewController
+	[Register("RestrictedResultViewController")]
+	public partial class RestrictedResultViewController : DialogViewController
 	{
-		Drug excludedDrug;
+		Drug restrictedDrug;
 		bool isGeneric;
 
-		public ExcludedResultViewController (IntPtr h) : base(h){}
+		public RestrictedResultViewController(IntPtr h) : base(h){}
 
-		public ExcludedResultViewController(Drug excludedDrug) : base(UITableViewStyle.Grouped, null, true)
+		public RestrictedResultViewController (Drug restrictedDrug) :base(UITableViewStyle.Grouped, null, true)
 		{
-			this.excludedDrug = excludedDrug;
-			if (excludedDrug.GetType () == typeof(GenericExcludedDrug))
+			this.restrictedDrug = restrictedDrug;
+			if (restrictedDrug.GetType () == typeof(GenericRestrictedDrug))
 				isGeneric = true;
 		}
 
@@ -32,14 +32,14 @@ namespace BCHAFormulary
 			string criteria;
 
 			if (isGeneric) {
-				name = ((GenericExcludedDrug)excludedDrug).genericName;
-				altNames = ((GenericExcludedDrug)excludedDrug).brandNames;
-				criteria = ((GenericExcludedDrug)excludedDrug).criteria.ToString();
+				name = ((GenericRestrictedDrug)restrictedDrug).genericName;
+				altNames = ((GenericRestrictedDrug)restrictedDrug).brandNames;
+				criteria = ((GenericRestrictedDrug)restrictedDrug).criteria.ToString();
 			}
 			else{
-				name = ((BrandExcludedDrug)excludedDrug).brandName;
-				altNames = ((BrandExcludedDrug)excludedDrug).genericNames;
-				criteria = ((BrandExcludedDrug)excludedDrug).criteria.ToString();
+				name = ((BrandRestrictedDrug)restrictedDrug).brandName;
+				altNames = ((BrandRestrictedDrug)restrictedDrug).genericNames;
+				criteria = ((BrandRestrictedDrug)restrictedDrug).criteria.ToString();
 			}
 			var rootElement = new RootElement (name);
 			rootElement.UnevenRows = true;
@@ -55,8 +55,8 @@ namespace BCHAFormulary
 				Root.Add (altSection);
 			}
 
-			//Excluded tag section
-			var statusElement = new StyledStringElement ("EXCLUDED");
+			//Restricted tag section
+			var statusElement = new StyledStringElement ("RESTRICTED");
 			statusElement.TextColor = (Colors.Red);
 			statusElement.BackgroundColor = UIColor.White;
 			statusElement.Font = UIFont.BoldSystemFontOfSize (18);

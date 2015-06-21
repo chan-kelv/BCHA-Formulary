@@ -96,7 +96,6 @@
     <InterfaceDefinition Include="Resources\LaunchScreen.xib" />
     <InterfaceDefinition Include="Views\DrugSearchView.xib" />
     <InterfaceDefinition Include="Main.storyboard" />
-    <InterfaceDefinition Include="Views\ExcludedReason.xib" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -130,8 +129,8 @@
       <DependentUpon>FormularyResultViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\ExcludedResultViewController.cs" />
-    <Compile Include="Views\ExcludedReason.cs" />
     <Compile Include="Utilities\UIProperties.cs" />
+    <Compile Include="Views\RestrictedResultViewController.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
