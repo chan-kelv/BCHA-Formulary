@@ -144,7 +144,7 @@ namespace BCHAFormulary
 					this.NavigationController.PushViewController(new RestrictedResultViewController(dummyDrug),true);
 				}
 				else{
-					this.NavigationController.PushViewController(new NoResultsViewController(),true);
+					this.NavigationController.PushViewController(new NoResultsViewController(txtDrugInput.Text),true);
 
 				}
 			};

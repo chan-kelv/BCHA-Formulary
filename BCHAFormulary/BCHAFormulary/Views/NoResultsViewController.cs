@@ -35,6 +35,14 @@ namespace BCHAFormulary
 //			});
 			if (!string.IsNullOrEmpty (drugInput))
 				txtDrugLabel.Text = string.Format ("Sorry, {0} could not be found", drugInput);
+
+			btnViewFormulary.TouchUpInside += delegate {
+//				UIApplication.SharedApplication.OpenUrl(new NSUrl("http://www.dropbox.com/s/3qdfzzfeucp83nt/formulary.csv?dl=0")); //TODO replace with real link
+				var webView = new UIWebView(View.Bounds);
+				View.AddSubview(webView);
+				webView.LoadRequest(new NSUrlRequest(new NSUrl("http://www.dropbox.com/s/3qdfzzfeucp83nt/formulary.csv?dl=0")));
+				webView.ScalesPageToFit = true;
+			};
 			// Perform any additional setup after loading the view, typically from a nib.
 		}
 	}
