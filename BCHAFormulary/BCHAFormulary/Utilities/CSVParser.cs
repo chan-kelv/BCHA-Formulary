@@ -122,15 +122,22 @@ namespace BCHAFormulary
 							else{
 								if(brandList.ContainsKey(brandName)){
 									BrandDrug brand;
-									if(brandList.TryGetValue(brandName, out brand) && ((BrandExcludedDrug)brand).status.Equals("Excluded"))
+									if(brandList.TryGetValue(brandName, out brand) && ((BrandExcludedDrug)brand).status.Equals(UIProperties.Excluded))
 										((BrandExcludedDrug)brand).addGenericName(name);
 								}
 								else{
 									brandList.Add(brandName, new BrandExcludedDrug(name, brandName, criteria));
 									excludedBrandNameList.Add(brandName);
 									lastBrandDrug = brandName;
-									genericList.Add(name, new GenericExcludedDrug(name, brandName, criteria));
-									lastGenericDrug = name;
+									if(!genericList.ContainsKey(name)){
+										genericList.Add(name, new GenericExcludedDrug(name, brandName, criteria));
+										lastGenericDrug = name;
+									}
+									else{
+										GenericDrug generic;
+										if(genericList.TryGetValue(name, out generic) && (generic.status.Equals(UIProperties.Excluded)))
+											generic.addBrandName(brandName);
+									}
 								}
 							}
 						}
@@ -203,15 +210,22 @@ namespace BCHAFormulary
 							else{
 								if(brandList.ContainsKey(brandName)){
 									BrandDrug brand;
-									if(brandList.TryGetValue(brandName, out brand) && (brand.status.Equals("Restricted")))
+									if(brandList.TryGetValue(brandName, out brand) && (brand.status.Equals(UIProperties.Restricted)))
 										brand.addGenericName(name);
 								}
 								else{
 									brandList.Add(brandName, new BrandRestrictedDrug(name, brandName, criteria));
 									restrictedBrandNameList.Add(brandName);
 									lastBrandDrug = brandName;
-									genericList.Add(name, new GenericRestrictedDrug(name, brandName, criteria));
-									lastGenericDrug = name;
+									if(!genericList.ContainsKey(name)){
+										genericList.Add(name, new GenericRestrictedDrug(name, brandName, criteria));
+										lastGenericDrug = name;
+									}
+									else{
+										GenericDrug generic;
+										if(genericList.TryGetValue(name, out generic) && (generic.status.Equals(UIProperties.Restricted)))
+											generic.addBrandName(brandName);
+									}
 								}
 							}
 						}
@@ -220,7 +234,6 @@ namespace BCHAFormulary
 				stream.Close();
 			} catch(Exception e){
 				Console.WriteLine ("Restricted parser failed due to {0}", e.Message);
-
 			}
 			finally{
 				stream = null;

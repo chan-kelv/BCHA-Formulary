@@ -46,7 +46,7 @@ namespace BCHAFormulary
 			// Perform any additional setup after loading the view, typically from a nib.
 
 			//make text 
-			NavigationController.SetNavigationBarHidden(hidden:true, animated:false);
+//			NavigationController.SetNavigationBarHidden(hidden:true, animated:false);
 			txtDrugInput.Layer.BorderColor = new CGColor(255,165,0);
 
 			#region update files
@@ -107,15 +107,54 @@ namespace BCHAFormulary
 				LoadListOffline();
 				hud.Hide(true);
 			}
-
-
 			#endregion
 
+			//dismiss focus when click outside the keyboard
+			var tap = new UITapGestureRecognizer ();
+			tap.AddTarget (() => View.EndEditing (true));
+			View.AddGestureRecognizer (tap);
+			tap.CancelsTouchesInView = false;
+
+			//dismiss the keyboard when hit return
+			txtDrugInput.ShouldReturn += (textField) => {
+				textField.ResignFirstResponder();
+				return true;
+			};
+
+			//handle search button
 			btnSearch.TouchUpInside += delegate {
 				if(webHelper.isConnected())
 					Console.WriteLine("phone is online");
 				Console.WriteLine("Generic drug count total {0}", masterList.genericList.Count);
+				if(txtDrugInput.Text.Equals("w")){
+					var dummyDrug = new GenericFormularyDrug("Tylenol", "Acetaminophen", "1");
+					dummyDrug.addBrandName("dummy brand");
+					dummyDrug.AddStrength("2");
+					dummyDrug.AddStrength("3");
+					this.NavigationController.PushViewController(new FormularyResultViewController(dummyDrug), false);
+				}
+				else if (txtDrugInput.Text.Equals("E")){
+					var dummyDrug = new BrandExcludedDrug("SITAGLIPTIN-METFORMIN", "Janumet", "Within the gliptin class, linagliptin may have clinical benefit, is covered by MOH, has dosing simplicity and lack of issues around drug interactions.");
+					dummyDrug.addGenericName("Janumet XR");
+					this.NavigationController.PushViewController(new ExcludedResultViewController(dummyDrug),true);
+				}
+				else if(txtDrugInput.Text.Equals("R")){
+					var dummyDrug = new GenericRestrictedDrug("ticagrelor", "Brilinta", "Restricted to the following criteria:\nFor continuity of care in patients who are using ticagrelor in the community\nAs per PharmaCare criteria for physicians who have signed off on the Collaborative Prescribing Agreement\n\nPharmaCare Criteria:\nTo be taken in combination with ASA 75 mg _ 150 mg daily for patients with acute coronary syndrome (i.e., ST elevation myocardial infarction [STEMI], non-ST elevation myocardial infarction [NSTEMI] or unstable angina [UA]) with ONE of the following:\nFailure on optimal clopidogrel and ASA therapy as defined by definite stent thrombosis or recurrent STEMI or NSTEMI or UA after prior revascularization via percutaneous coronary intervention (PCI)\nOR\nSTEMI and undergoing revascularization via PCI\nOR\nNSTEMI or UA and high risk angiographic anatomy and undergoing revascularization via PCI\n");
+					dummyDrug.addBrandName("Timentin");
+					this.NavigationController.PushViewController(new RestrictedResultViewController(dummyDrug),true);
+				}
+				else{
+					this.NavigationController.PushViewController(new NoResultsViewController(txtDrugInput.Text),true);
+
+				}
 			};
+		}
+
+		public override void ViewDidAppear (bool animated)
+		{
+			base.ViewDidAppear (animated);
+			NavigationController.NavigationBarHidden = true;
+
 		}
 
 		private void LoadListOffline(){

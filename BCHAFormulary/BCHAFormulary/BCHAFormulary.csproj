@@ -87,6 +87,7 @@
     <Reference Include="Connectivity.Plugin.Abstractions">
       <HintPath>..\packages\Xam.Plugin.Connectivity.1.0.2\lib\Xamarin.iOS10\Connectivity.Plugin.Abstractions.dll</HintPath>
     </Reference>
+    <Reference Include="MonoTouch.Dialog-1" />
   </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Contents.json" />
@@ -95,6 +96,7 @@
     <InterfaceDefinition Include="Resources\LaunchScreen.xib" />
     <InterfaceDefinition Include="Views\DrugSearchView.xib" />
     <InterfaceDefinition Include="Main.storyboard" />
+    <InterfaceDefinition Include="Views\NoResultsViewController.xib" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -123,6 +125,17 @@
       <DependentUpon>DrugSearchView.cs</DependentUpon>
     </Compile>
     <Compile Include="Utilities\CSVParser.cs" />
+    <Compile Include="Views\FormularyResultViewController.cs" />
+    <Compile Include="Views\FormularyResultViewController.designer.cs">
+      <DependentUpon>FormularyResultViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ExcludedResultViewController.cs" />
+    <Compile Include="Utilities\UIProperties.cs" />
+    <Compile Include="Views\RestrictedResultViewController.cs" />
+    <Compile Include="Views\NoResultsViewController.cs" />
+    <Compile Include="Views\NoResultsViewController.designer.cs">
+      <DependentUpon>NoResultsViewController.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
