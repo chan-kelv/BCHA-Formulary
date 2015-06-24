@@ -143,6 +143,10 @@ namespace BCHAFormulary
 					dummyDrug.addBrandName("Timentin");
 					this.NavigationController.PushViewController(new RestrictedResultViewController(dummyDrug),true);
 				}
+				else{
+					this.NavigationController.PushViewController(new NoResultsViewController(),true);
+
+				}
 			};
 		}
 
