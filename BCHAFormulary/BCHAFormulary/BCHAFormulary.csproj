@@ -136,6 +136,7 @@
     <Compile Include="Views\NoResultsViewController.designer.cs">
       <DependentUpon>NoResultsViewController.cs</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\AutoCompleteTableSource.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>

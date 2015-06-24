@@ -8,6 +8,7 @@ using MBProgressHUD;
 using System.Threading.Tasks;
 using System.Text;
 using System.IO;
+using System.Linq;
 
 
 namespace BCHAFormulary
@@ -26,6 +27,9 @@ namespace BCHAFormulary
 		string formularyData;
 
 		CSVParser masterList = new CSVParser();
+		string[] masterDrugNameList;
+
+		UITableView autoCompleteTable;
 
 		public DrugSearchView () : base ("DrugSearchView", null)
 		{
@@ -93,6 +97,9 @@ namespace BCHAFormulary
 							formularyFile.saveFile(formularyData);
 							excludedFile.saveFile(excludedData);
 							restrictedFile.saveFile(restrictionData);
+
+							//turns all keys in the masterDrugList into a string[] of just the names
+							generateAllDrugNames ();
 						}
 						hud.Hide (true);
 					}, TaskScheduler.FromCurrentSynchronizationContext());
@@ -109,6 +116,7 @@ namespace BCHAFormulary
 			}
 			#endregion
 
+
 			//dismiss focus when click outside the keyboard
 			var tap = new UITapGestureRecognizer ();
 			tap.AddTarget (() => View.EndEditing (true));
@@ -120,6 +128,17 @@ namespace BCHAFormulary
 				textField.ResignFirstResponder();
 				return true;
 			};
+
+			autoCompleteTable = new UITableView (new CGRect (8, 205, 320, 100));
+			autoCompleteTable.ScrollEnabled = true;
+			autoCompleteTable.Hidden = true;
+			View.AddSubview (autoCompleteTable);
+
+			txtDrugInput.ShouldChangeCharacters += (sender, something, e) => {
+				UpdateSuggestion();
+				return true;
+			};
+
 
 			//handle search button
 			btnSearch.TouchUpInside += delegate {
@@ -145,7 +164,6 @@ namespace BCHAFormulary
 				}
 				else{
 					this.NavigationController.PushViewController(new NoResultsViewController(txtDrugInput.Text),true);
-
 				}
 			};
 		}
@@ -176,6 +194,36 @@ namespace BCHAFormulary
 			masterList.ParseExcluded(excludedData);
 			masterList.ParseRestricted(restrictionData);
 		}
+
+		private void UpdateSuggestion(){
+			string[] suggestions = null;
+
+			suggestions = masterDrugNameList.Where(x => x.ToUpperInvariant().Contains(txtDrugInput.Text.ToUpper()))
+				.OrderByDescending(x => x.ToUpperInvariant().StartsWith(txtDrugInput.Text.ToUpper()))
+				.Select (x => x).ToArray();
+			if (suggestions.Length != 0) {
+				autoCompleteTable.Hidden = false;
+				autoCompleteTable.Source = new AutoCompleteTableSource (suggestions, this);
+				autoCompleteTable.ReloadData ();
+			}
+		}
+
+		public void SetAutoCompleteText(string finalString) {
+			txtDrugInput.Text = finalString;
+			txtDrugInput.ResignFirstResponder();
+			autoCompleteTable.Hidden = true;
+//
+//			labelSelection.Text = "You selected: " + finalString;
+//			labelSelection.Hidden = false;
+		}
+
+		private void generateAllDrugNames(){
+			var list1 = masterList.genericList.Keys.ToArray();
+			var list2 = masterList.brandList.Keys.ToArray();
+			if(list1 != null && list2 != null)
+				masterDrugNameList = list1.Concat (list2).ToArray ();
+		}
+
 	}
 }
 
