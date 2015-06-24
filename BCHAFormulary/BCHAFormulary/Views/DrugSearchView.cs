@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Text;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 
 namespace BCHAFormulary
@@ -135,10 +136,19 @@ namespace BCHAFormulary
 			View.AddSubview (autoCompleteTable);
 
 			txtDrugInput.ShouldChangeCharacters += (sender, something, e) => {
-				UpdateSuggestion();
+				Thread thread = new Thread(()=>{
+					UpdateSuggestion();
+				});
+				thread.Start();
 				return true;
 			};
-
+			txtDrugInput.ShouldClear+= (textField) => {
+				Thread thread = new Thread(()=>{
+					UpdateSuggestion();
+				});
+				thread.Start();
+				return true;
+			};
 
 			//handle search button
 			btnSearch.TouchUpInside += delegate {
@@ -175,6 +185,12 @@ namespace BCHAFormulary
 
 		}
 
+		public override void ViewDidUnload ()
+		{
+			base.ViewDidUnload ();
+			ReleaseDesignerOutlets ();
+		}
+
 		private void LoadListOffline(){
 			//datasets are either default/loaded files/new files at this point
 			if(string.IsNullOrEmpty(formularyData)){ //use default if no saved file found
@@ -198,13 +214,30 @@ namespace BCHAFormulary
 		private void UpdateSuggestion(){
 			string[] suggestions = null;
 
-			suggestions = masterDrugNameList.Where(x => x.ToUpperInvariant().Contains(txtDrugInput.Text.ToUpper()))
-				.OrderByDescending(x => x.ToUpperInvariant().StartsWith(txtDrugInput.Text.ToUpper()))
-				.Select (x => x).ToArray();
-			if (suggestions.Length != 0) {
-				autoCompleteTable.Hidden = false;
-				autoCompleteTable.Source = new AutoCompleteTableSource (suggestions, this);
-				autoCompleteTable.ReloadData ();
+			try{
+				InvokeOnMainThread(()=>{
+					if(string.IsNullOrEmpty(txtDrugInput.Text))
+						suggestions = null;
+					else{
+						suggestions = masterDrugNameList.Where(x => x.ToUpperInvariant().Contains(txtDrugInput.Text.ToUpper()))
+							.OrderByDescending(x => x.ToUpperInvariant().StartsWith(txtDrugInput.Text.ToUpper()))
+							.Select (x => x).ToArray();
+					}
+				});
+				if (suggestions!= null && suggestions.Length != 0) {
+					InvokeOnMainThread(()=>{
+						autoCompleteTable.Hidden = false;
+						autoCompleteTable.Source = new AutoCompleteTableSource (suggestions, this);
+						autoCompleteTable.ReloadData ();
+					});
+				} else {
+					InvokeOnMainThread(()=>{
+						autoCompleteTable.Hidden = true;
+					});
+				}
+			}
+			catch(Exception e){
+				Console.WriteLine ("No suggestions due to {0}", e.Message);
 			}
 		}
 
@@ -212,9 +245,6 @@ namespace BCHAFormulary
 			txtDrugInput.Text = finalString;
 			txtDrugInput.ResignFirstResponder();
 			autoCompleteTable.Hidden = true;
-//
-//			labelSelection.Text = "You selected: " + finalString;
-//			labelSelection.Hidden = false;
 		}
 
 		private void generateAllDrugNames(){
