@@ -53,7 +53,7 @@ namespace BCHAFormulary
 
 			var strengthSection = new Section ("Strengths");
 			foreach (string strength in strenghts) {
-				var strengthString = "- " + strength;
+				var strengthString = "• " + strength;
 				var strengthElement = new StringElement (strengthString);
 				strengthSection.Add (strengthElement);
 			}
