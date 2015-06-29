@@ -135,20 +135,13 @@ namespace BCHAFormulary
 			autoCompleteTable.Hidden = true;
 			View.AddSubview (autoCompleteTable);
 
-			txtDrugInput.ShouldChangeCharacters += (sender, something, e) => {
-				Thread thread = new Thread(()=>{
+			NSNotificationCenter.DefaultCenter.AddObserver
+			(UITextField.TextFieldTextDidChangeNotification, (notification) =>
+				{
+					Console.WriteLine ("Character received! {0}", notification.Object ==
+						txtDrugInput);
 					UpdateSuggestion();
 				});
-				thread.Start();
-				return true;
-			};
-			txtDrugInput.ShouldClear+= (textField) => {
-				Thread thread = new Thread(()=>{
-					UpdateSuggestion();
-				});
-				thread.Start();
-				return true;
-			};
 
 			//handle search button
 			btnSearch.TouchUpInside += delegate {
@@ -200,16 +193,19 @@ namespace BCHAFormulary
 
 		private void LoadListOffline(){
 			//datasets are either default/loaded files/new files at this point
-			if(string.IsNullOrEmpty(formularyData)){ //use default if no saved file found
+
+			//use default if no saved file found
+			if(string.IsNullOrEmpty(formularyData)){ 
 				formularyData = File.ReadAllText("formulary.csv");
 			}
-			if(string.IsNullOrEmpty(excludedData)){ //use default if no saved file found
+			//use default if no saved file found
+			if(string.IsNullOrEmpty(excludedData)){ 
 				excludedData = File.ReadAllText("excluded.csv");
-				//					masterList.ParseFormulary(excludedData);
+
 			}
-			if(string.IsNullOrEmpty(restrictionData)){ //use default if no saved file found
+			//use default if no saved file found
+			if(string.IsNullOrEmpty(restrictionData)){ 
 				restrictionData = File.ReadAllText("restricted.csv");
-				//					masterList.ParseFormulary(restrictionData);
 			}
 
 			//parse data 			
@@ -218,29 +214,25 @@ namespace BCHAFormulary
 			masterList.ParseRestricted(restrictionData);
 		}
 
-		private void UpdateSuggestion(){
+		private void UpdateSuggestion(string inputText = null){
 			string[] suggestions = null;
-
+			var txtField = txtDrugInput.Text;
 			try{
-				InvokeOnMainThread(()=>{
-					if(string.IsNullOrEmpty(txtDrugInput.Text))
+//				InvokeOnMainThread(()=>{
+				Console.WriteLine ("Input is {0}", txtField);
+				if(string.IsNullOrEmpty(txtField))
 						suggestions = null;
 					else{
-						suggestions = masterDrugNameList.Where(x => x.ToUpperInvariant().Contains(txtDrugInput.Text.ToUpper()))
-							.OrderByDescending(x => x.ToUpperInvariant().StartsWith(txtDrugInput.Text.ToUpper()))
+					suggestions = masterDrugNameList.Where(x => x.ToUpperInvariant().Contains(txtField.ToUpper()))
+						.OrderByDescending(x => x.ToUpperInvariant().StartsWith(txtField.ToUpper()))
 							.Select (x => x).ToArray();
 					}
-				});
 				if (suggestions!= null && suggestions.Length != 0) {
-					InvokeOnMainThread(()=>{
 						autoCompleteTable.Hidden = false;
 						autoCompleteTable.Source = new AutoCompleteTableSource (suggestions, this);
 						autoCompleteTable.ReloadData ();
-					});
 				} else {
-					InvokeOnMainThread(()=>{
 						autoCompleteTable.Hidden = true;
-					});
 				}
 			}
 			catch(Exception e){
