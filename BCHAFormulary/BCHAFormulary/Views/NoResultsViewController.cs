@@ -26,6 +26,7 @@ namespace BCHAFormulary
 		public override void ViewDidLoad ()
 		{
 			base.ViewDidLoad ();
+			Title = "Drug Not Found";
 			NavigationController.NavigationBar.TintColor = UIColor.Black;
 			NavigationController.NavigationBar.BarTintColor = Colors.DarkBlue;
 			NavigationController.NavigationBarHidden = false;

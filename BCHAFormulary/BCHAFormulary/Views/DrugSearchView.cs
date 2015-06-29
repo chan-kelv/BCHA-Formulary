@@ -8,6 +8,8 @@ using MBProgressHUD;
 using System.Threading.Tasks;
 using System.Text;
 using System.IO;
+using System.Linq;
+using System.Threading;
 
 
 namespace BCHAFormulary
@@ -26,6 +28,9 @@ namespace BCHAFormulary
 		string formularyData;
 
 		CSVParser masterList = new CSVParser();
+		string[] masterDrugNameList;
+
+		UITableView autoCompleteTable;
 
 		public DrugSearchView () : base ("DrugSearchView", null)
 		{
@@ -93,6 +98,9 @@ namespace BCHAFormulary
 							formularyFile.saveFile(formularyData);
 							excludedFile.saveFile(excludedData);
 							restrictedFile.saveFile(restrictionData);
+
+							//turns all keys in the masterDrugList into a string[] of just the names
+							generateAllDrugNames ();
 						}
 						hud.Hide (true);
 					}, TaskScheduler.FromCurrentSynchronizationContext());
@@ -109,6 +117,7 @@ namespace BCHAFormulary
 			}
 			#endregion
 
+
 			//dismiss focus when click outside the keyboard
 			var tap = new UITapGestureRecognizer ();
 			tap.AddTarget (() => View.EndEditing (true));
@@ -121,32 +130,51 @@ namespace BCHAFormulary
 				return true;
 			};
 
+			autoCompleteTable = new UITableView (new CGRect (8, 205, 320, 100));
+			autoCompleteTable.ScrollEnabled = true;
+			autoCompleteTable.Hidden = true;
+			View.AddSubview (autoCompleteTable);
+
+			NSNotificationCenter.DefaultCenter.AddObserver
+			(UITextField.TextFieldTextDidChangeNotification, (notification) =>
+				{
+					Console.WriteLine ("Character received! {0}", notification.Object ==
+						txtDrugInput);
+					UpdateSuggestion();
+				});
+
 			//handle search button
 			btnSearch.TouchUpInside += delegate {
-				if(webHelper.isConnected())
-					Console.WriteLine("phone is online");
-				Console.WriteLine("Generic drug count total {0}", masterList.genericList.Count);
-				if(txtDrugInput.Text.Equals("w")){
-					var dummyDrug = new GenericFormularyDrug("Tylenol", "Acetaminophen", "1");
-					dummyDrug.addBrandName("dummy brand");
-					dummyDrug.AddStrength("2");
-					dummyDrug.AddStrength("3");
-					this.NavigationController.PushViewController(new FormularyResultViewController(dummyDrug), false);
+				GenericDrug genericSearchDrug;
+				BrandDrug brandSearchDrug;
+				UIViewController resultView = null;
+				if(masterList.genericList.TryGetValue(txtDrugInput.Text.ToUpper(), out genericSearchDrug)){
+					var genericType = genericSearchDrug.GetType();
+					if (genericType == typeof(GenericFormularyDrug))
+						resultView = new FormularyResultViewController(genericSearchDrug);
+					else if (genericType == typeof(GenericExcludedDrug))
+						resultView = new ExcludedResultViewController(genericSearchDrug);
+					else if(genericType == typeof(GenericRestrictedDrug))
+						resultView = new RestrictedResultViewController(genericSearchDrug);
 				}
-				else if (txtDrugInput.Text.Equals("E")){
-					var dummyDrug = new BrandExcludedDrug("SITAGLIPTIN-METFORMIN", "Janumet", "Within the gliptin class, linagliptin may have clinical benefit, is covered by MOH, has dosing simplicity and lack of issues around drug interactions.");
-					dummyDrug.addGenericName("Janumet XR");
-					this.NavigationController.PushViewController(new ExcludedResultViewController(dummyDrug),true);
+				else if(masterList.brandList.TryGetValue(txtDrugInput.Text.ToUpper(), out brandSearchDrug)){
+					var brandType = brandSearchDrug.GetType();
+					if(brandType == typeof(BrandFormularyDrug))
+						resultView = new FormularyResultViewController(brandSearchDrug);
+					else if(brandType == typeof(BrandExcludedDrug))
+						resultView = new ExcludedResultViewController(brandSearchDrug);
+					else if(brandType == typeof(BrandRestrictedDrug))
+						resultView = new RestrictedResultViewController(brandSearchDrug);
 				}
-				else if(txtDrugInput.Text.Equals("R")){
-					var dummyDrug = new GenericRestrictedDrug("ticagrelor", "Brilinta", "Restricted to the following criteria:\nFor continuity of care in patients who are using ticagrelor in the community\nAs per PharmaCare criteria for physicians who have signed off on the Collaborative Prescribing Agreement\n\nPharmaCare Criteria:\nTo be taken in combination with ASA 75 mg _ 150 mg daily for patients with acute coronary syndrome (i.e., ST elevation myocardial infarction [STEMI], non-ST elevation myocardial infarction [NSTEMI] or unstable angina [UA]) with ONE of the following:\nFailure on optimal clopidogrel and ASA therapy as defined by definite stent thrombosis or recurrent STEMI or NSTEMI or UA after prior revascularization via percutaneous coronary intervention (PCI)\nOR\nSTEMI and undergoing revascularization via PCI\nOR\nNSTEMI or UA and high risk angiographic anatomy and undergoing revascularization via PCI\n");
-					dummyDrug.addBrandName("Timentin");
-					this.NavigationController.PushViewController(new RestrictedResultViewController(dummyDrug),true);
-				}
-				else{
-					this.NavigationController.PushViewController(new NoResultsViewController(txtDrugInput.Text),true);
 
-				}
+				if(resultView == null)
+					resultView = new NoResultsViewController(txtDrugInput.Text.ToUpper());
+
+				this.NavigationController.PushViewController(resultView, true);
+			};
+
+			btnAbout.TouchUpInside += (object sender, EventArgs e) => {
+				this.NavigationController.PushViewController(new AboutView(), true);
 			};
 		}
 
@@ -157,18 +185,27 @@ namespace BCHAFormulary
 
 		}
 
+		public override void ViewDidUnload ()
+		{
+			base.ViewDidUnload ();
+			ReleaseDesignerOutlets ();
+		}
+
 		private void LoadListOffline(){
 			//datasets are either default/loaded files/new files at this point
-			if(string.IsNullOrEmpty(formularyData)){ //use default if no saved file found
+
+			//use default if no saved file found
+			if(string.IsNullOrEmpty(formularyData)){ 
 				formularyData = File.ReadAllText("formulary.csv");
 			}
-			if(string.IsNullOrEmpty(excludedData)){ //use default if no saved file found
+			//use default if no saved file found
+			if(string.IsNullOrEmpty(excludedData)){ 
 				excludedData = File.ReadAllText("excluded.csv");
-				//					masterList.ParseFormulary(excludedData);
+
 			}
-			if(string.IsNullOrEmpty(restrictionData)){ //use default if no saved file found
+			//use default if no saved file found
+			if(string.IsNullOrEmpty(restrictionData)){ 
 				restrictionData = File.ReadAllText("restricted.csv");
-				//					masterList.ParseFormulary(restrictionData);
 			}
 
 			//parse data 			
@@ -176,6 +213,46 @@ namespace BCHAFormulary
 			masterList.ParseExcluded(excludedData);
 			masterList.ParseRestricted(restrictionData);
 		}
+
+		private void UpdateSuggestion(string inputText = null){
+			string[] suggestions = null;
+			var txtField = txtDrugInput.Text;
+			try{
+//				InvokeOnMainThread(()=>{
+				Console.WriteLine ("Input is {0}", txtField);
+				if(string.IsNullOrEmpty(txtField))
+						suggestions = null;
+					else{
+					suggestions = masterDrugNameList.Where(x => x.ToUpperInvariant().Contains(txtField.ToUpper()))
+						.OrderByDescending(x => x.ToUpperInvariant().StartsWith(txtField.ToUpper()))
+							.Select (x => x).ToArray();
+					}
+				if (suggestions!= null && suggestions.Length != 0) {
+						autoCompleteTable.Hidden = false;
+						autoCompleteTable.Source = new AutoCompleteTableSource (suggestions, this);
+						autoCompleteTable.ReloadData ();
+				} else {
+						autoCompleteTable.Hidden = true;
+				}
+			}
+			catch(Exception e){
+				Console.WriteLine ("No suggestions due to {0}", e.Message);
+			}
+		}
+
+		public void SetAutoCompleteText(string finalString) {
+			txtDrugInput.Text = finalString;
+			txtDrugInput.ResignFirstResponder();
+			autoCompleteTable.Hidden = true;
+		}
+
+		private void generateAllDrugNames(){
+			var list1 = masterList.genericList.Keys.ToArray();
+			var list2 = masterList.brandList.Keys.ToArray();
+			if(list1 != null && list2 != null)
+				masterDrugNameList = list1.Concat (list2).ToArray ();
+		}
+
 	}
 }
 
